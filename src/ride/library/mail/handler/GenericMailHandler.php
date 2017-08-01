@@ -7,6 +7,7 @@ use ride\library\mail\exception\RecipientNotFoundMailException;
 use ride\library\mail\exception\VariableNotFoundMailException;
 use ride\library\mail\template\MailTemplate;
 use ride\library\mail\transport\Transport;
+use ride\library\mail\MailMessage;
 use ride\library\system\file\browser\FileBrowser;
 
 /**
@@ -85,7 +86,18 @@ class GenericMailHandler implements MailHandler {
             $message->addAttachment($file);
         }
 
+        $message = $this->processMessage($message);
+
         $this->transport->send($message);
+    }
+
+    /**
+     * Hook to process the message before sending it
+     * @param \ride\library\mail\MailMessage $message
+     * @return \ride\library\mail\MailMessage
+     */
+    protected function processMessage(MailMessage $message) {
+        return $message;
     }
 
     /**
@@ -95,7 +107,7 @@ class GenericMailHandler implements MailHandler {
      * @param array $array Array with the strings to parse as value
      * @return array Provided array with the variables replaced
      */
-    private function parseVariablesInArray(array $variables, array $array = null, $useVariableTokens = true) {
+    protected function parseVariablesInArray(array $variables, array $array = null, $useVariableTokens = true) {
         if ($array === null) {
             return array();
         }
@@ -114,7 +126,7 @@ class GenericMailHandler implements MailHandler {
      * @param string $string String to apply the variables in
      * @return string Provided string with the variables replaced
      */
-    private function parseVariables(array $variables, $string, $useVariableTokens = true) {
+    protected function parseVariables(array $variables, $string, $useVariableTokens = true) {
         foreach ($variables as $variable => $value) {
             if ($useVariableTokens) {
                 $string = str_replace(MailTemplate::VARIABLE_OPEN . $variable . MailTemplate::VARIABLE_CLOSE, $value, $string);

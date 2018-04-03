@@ -120,7 +120,16 @@ class GenericMailHandler implements MailHandler {
         }
 
         foreach ($array as $key => $value) {
-            $array[$key] = $this->parseVariables($variables, $value, $useVariableTokens);
+            if (!$useVariableTokens) {
+                $oldValue = $value;
+                $value = MailTemplate::VARIABLE_OPEN . $value . MailTemplate::VARIABLE_CLOSE;
+            }
+
+            $array[$key] = $this->parseVariables($variables, $value);
+
+            if (!$useVariableTokens && $array[$key] == $value) {
+                $array[$key] = $oldValue;
+            }
         }
 
         return $array;
@@ -133,13 +142,9 @@ class GenericMailHandler implements MailHandler {
      * @param string $string String to apply the variables in
      * @return string Provided string with the variables replaced
      */
-    protected function parseVariables(array $variables, $string, $useVariableTokens = true) {
+    protected function parseVariables(array $variables, $string) {
         foreach ($variables as $variable => $value) {
-            if ($useVariableTokens) {
-                $string = str_replace(MailTemplate::VARIABLE_OPEN . $variable . MailTemplate::VARIABLE_CLOSE, $value, $string);
-            } else {
-                $string = str_replace($variable, $value, $string);
-            }
+            $string = str_replace(MailTemplate::VARIABLE_OPEN . $variable . MailTemplate::VARIABLE_CLOSE, $value, $string);
         }
 
         return $string;

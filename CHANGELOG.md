@@ -1,3 +1,6 @@
+# [1.0.3] - 2020-01-02
+## Updated
+- set From when sending mail
 
 # [1.0.2] - 2018-04-03
 ## Updated

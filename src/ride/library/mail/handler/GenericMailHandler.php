@@ -67,7 +67,6 @@ class GenericMailHandler implements MailHandler {
             $from = $this->parseVariables($recipientVariables, $mailTemplate->getSenderEmail());
         }
 
-        $from = $this->parseVariables($contentVariables, $from);
         $subject = $this->parseVariables($contentVariables, $mailTemplate->getSubject());
         $body = $this->parseVariables($contentVariables, $mailTemplate->getBody());
         $recipients = $this->parseVariablesInArray($recipientVariables, $mailTemplate->getRecipients(), false);
@@ -76,6 +75,7 @@ class GenericMailHandler implements MailHandler {
 
         $message = $this->transport->createMessage();
         $message->setIsHtmlMessage(true);
+        $message->setFrom($from);
         $message->setReplyTo($from);
         $message->setSubject($subject);
         $message->setMessage($body);

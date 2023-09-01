@@ -144,7 +144,9 @@ class GenericMailHandler implements MailHandler {
      */
     protected function parseVariables(array $variables, $string) {
         foreach ($variables as $variable => $value) {
-            $string = str_replace(MailTemplate::VARIABLE_OPEN . $variable . MailTemplate::VARIABLE_CLOSE, $value, $string);
+            if ($value) {
+                $string = str_replace(MailTemplate::VARIABLE_OPEN . $variable . MailTemplate::VARIABLE_CLOSE, $value, $string);
+            }
         }
 
         return $string;
@@ -156,7 +158,7 @@ class GenericMailHandler implements MailHandler {
      * mail type
      * @param array $providedVariables Variables provided by the send logic
      * @return null
-     * @throws \ride\library\mail\exception\VariableNotFoundException when an
+     * @throws \ride\library\mail\exception\VariableNotFoundMailException when an
      * available variable of the mail type is not provided by the send logic
      */
     private function checkContentVariables(array $availableVariables, array $providedVariables) {
@@ -173,7 +175,7 @@ class GenericMailHandler implements MailHandler {
      * mail type
      * @param array $providedRecipients Recipients provided by the send logic
      * @return null
-     * @throws \ride\library\mail\exception\RecipientNotFoundException when an
+     * @throws \ride\library\mail\exception\RecipientNotFoundMailException when an
      * available recipient of the mail type is not provided by the send logic
      */
     private function checkRecipientVariables(array $availableRecipients, array $providedRecipients) {
